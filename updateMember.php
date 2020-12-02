@@ -3,8 +3,8 @@
 require_once "dbconfig.php";
  
 // Define variables and initialize with empty values
-$agentName = $id_passport = $member_number = $phone_number = $dob = $gender = $county =$constituency = $ward ="";
-$agentName_err = $id_passport_err = $member_number_err = $phone_number_err = $dob_err = $gender_err = $county_err =$constituency_err = $ward_err ="";
+$first_name = $middle_name = $surname = $id_passport = $member_number = $phone_number = $dob = $gender = $county =$constituency = $ward ="";
+$first_name_err = $middle_name_err= $surname_err = $id_passport_err = $member_number_err = $phone_number_err = $dob_err = $gender_err = $county_err =$constituency_err = $ward_err ="";
 
  
 // Processing form data when form is submitted
@@ -13,13 +13,31 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     $id = $_POST["id"];
     
     // Validate name
-    $input_name = trim($_POST["agentName"]);
-    if(empty($input_name)){
-        $agentName_err = "Please enter a name.";
-    } elseif(!filter_var($input_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
-        $agentName_err = "Please enter a valid name.";
+    $input_first_name = trim($_POST["first_name"]);
+    if(empty($input_first_name)){
+        $first_name_err = "Please enter a  first name.";
+    } elseif(!filter_var($input_first_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
+        $first_name_err = "Please enter a valid name.";
     } else{
-        $agentName = $input_name;
+        $first_name = $input_first_name;
+    }
+
+    $input_middle_name = trim($_POST["middle_name"]);
+    if(empty($input_middle_name)){
+        $middle_name_err = "Please enter a name.";
+    } elseif(!filter_var($input_middle_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
+        $middle_name_err = "Please enter a valid name.";
+    } else{
+        $middle_name = $input_middle_name;
+    }
+
+    $input_surname = trim($_POST["surname"]);
+    if(empty($input_surname)){
+        $surname_err = "Please enter a name.";
+    } elseif(!filter_var($input_surname, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
+        $surname_err = "Please enter a valid name.";
+    } else{
+        $surname = $input_surname;
     }
     
     // Validate id_passport
@@ -90,21 +108,24 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $ward = $input_ward;
     }
 
+
     
     // Check input errors before inserting in database
-    if(empty($agentName_err) && empty($id_passport_err) && empty($member_number_err) 
-    && empty($phone_number_err)&& empty($dob_err)&& empty($gender_err)&& empty($county_err)
+    if(empty($first_name_err) && empty($middle_name_err) && empty($surname_err) && empty($id_passport_err) 
+    && empty($member_number_err) && empty($phone_number_err)&& empty($dob_err)&& empty($gender_err)&& empty($county_err)
     && empty($constituency_err)&& empty($ward_err)){
         // Prepare an update statement
-        $sql = "UPDATE agents SET agentName=?, id_passport=?, member_number=?, phone_number=?, dob=?, gender=?, county=?, constituency=?, ward=? WHERE id=?";
+        $sql = "UPDATE members_data SET first_name=?, middle_name=?, surname=?, id_passport=?, member_number=?, phone_number=?, dob=?, gender=?, county=?, constituency=?, ward=? WHERE id=?";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "isssssssss",$param_id, $param_name, $param_id_passport, $param_member_number, $param_phone_number,$param_dob,$param_gender,$param_county,$param_constituency,$param_ward);
+            mysqli_stmt_bind_param($stmt, "isssssssssss",$param_id, $param_first_name,$param_middle_name,$param_surname, $param_id_passport, $param_member_number, $param_phone_number,$param_dob,$param_gender,$param_county,$param_constituency,$param_ward);
             
             // Set parameters
             $param_id = $id;
-            $param_name = $agentName;
+            $param_first_name = $first_name;
+            $param_middle_name = $middle_name;
+            $param_surname = $surname;
             $param_id_passport = $id_passport;
             $param_member_number = $member_number;
             $param_phone_number = $phone_number;
@@ -119,7 +140,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records updated successfully. Redirect to landing page
-                header("location: agent.php");
+                header("location: members.php");
                 exit();
             } else{
                 echo "Something went wrong. Please try again later.";
@@ -139,7 +160,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $id =  trim($_GET["id"]);
         
         // Prepare a select statement
-        $sql = "SELECT * FROM agents WHERE id = ?";
+        $sql = "SELECT * FROM members_data WHERE id = ?";
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "i", $param_id);
@@ -157,7 +178,9 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
                     
                     // Retrieve individual field value
-                    $agentName = $row["agentName"];
+                    $first_name = $row["first_name"];
+                    $middle_name = $row["middle_name"];
+                    $surname = $row["surname"];
                     $id_passport = $row["id_passport"];
                     $member_number = $row["member_number"];
                     $phone_number = $row["phone_number"];
@@ -210,14 +233,24 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header">
-                        <h2>Edit Agent Details</h2>
+                        <h2>Edit Members Details</h2>
                     </div>
-                    <p>Please submit the details to update the agent details.</p>
+                    <p>Please submit the details to update the members details.</p>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
-                        <div class="form-group <?php echo (!empty($agentName_err)) ? 'has-error' : ''; ?>">
-                            <label>Agent Name</label>
-                            <input type="text" name="agentName" class="form-control" value="<?php echo $agentName; ?>">
-                            <span class="help-block"><?php echo $agentName_err;?></span>
+                        <div class="form-group <?php echo (!empty($first_name_err)) ? 'has-error' : ''; ?>">
+                            <label>First Name</label>
+                            <input type="text" name="first_name" class="form-control" value="<?php echo $first_name; ?>">
+                            <span class="help-block"><?php echo $first_name_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($middle_name_err)) ? 'has-error' : ''; ?>">
+                            <label>Middle Name</label>
+                            <input type="text" name="middle_name" class="form-control" value="<?php echo $middle_name; ?>">
+                            <span class="help-block"><?php echo $middle_name_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($surname_err)) ? 'has-error' : ''; ?>">
+                            <label>Surname</label>
+                            <input type="text" name="surname" class="form-control" value="<?php echo $surname; ?>">
+                            <span class="help-block"><?php echo $surname_err;?></span>
                         </div>
                         <div class="form-group <?php echo (!empty($id_passport_err)) ? 'has-error' : ''; ?>">
                             <label>ID/Passport</label>
@@ -261,7 +294,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         </div>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
                         <input type="submit" class="btn btn-primary" value="Submit">
-                        <a href="agent.php" class="btn btn-default">Cancel</a>
+                        <a href="members.php" class="btn btn-default">Cancel</a>
                     </form>
                 </div>
             </div>        

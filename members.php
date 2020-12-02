@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Agent</title>
+    <title>Registered Members</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
     <style type="text/css">
         .wrapper{
-            width: 650px;
+            width: 680px;
             margin: 0 auto;
         }
         .page-header h2{
@@ -30,22 +30,23 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header clearfix">
-                        <h2 class="pull-left">Add Agent</h2>
-                        <a href="newagent.php" class="btn btn-success pull-right">Add New Agent</a>
+                        <h2 class="pull-left">View Registered Members</h2>
                     </div>
                     <?php
                     // Include config file
                     require_once "dbconfig.php";
                     
                     // Attempt select query execution
-                    $sql = "SELECT * FROM agents";
+                    $sql = "SELECT * FROM members_data";
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
                                         echo "<th>ID</th>";
-                                        echo "<th>Agent Name</th>";
+                                        echo "<th>First Name</th>";
+                                        echo "<th>Middle Name</th>";
+                                        echo "<th>Surname</th>";
                                         echo "<th>ID/Passport</th>";
                                         echo "<th>Member Number</th>";
                                         echo "<th>PhoneNumber</th>";
@@ -54,7 +55,7 @@
                                         echo "<th>County</th>";
                                         echo "<th>Constituency</th>";
                                         echo "<th>Ward</th>";
-                                        echo "<th>Date Created</th>";
+                                        echo "<th>Date Joined</th>";
                                         echo "<th>Action</th>";
                                     echo "</tr>";
                                 echo "</thead>";
@@ -62,7 +63,9 @@
                                 while($row = mysqli_fetch_array($result)){
                                     echo "<tr>";
                                         echo "<td>" . $row['id'] . "</td>";
-                                        echo "<td>" . $row['agentName'] . "</td>";
+                                        echo "<td>" . $row['first_name'] . "</td>";
+                                        echo "<td>" . $row['middle_name'] . "</td>";
+                                        echo "<td>" . $row['surname'] . "</td>";
                                         echo "<td>" . $row['id_passport'] . "</td>";
                                         echo "<td>" . $row['member_number'] . "</td>";
                                         echo "<td>" . $row['phone_number'] . "</td>";
@@ -71,10 +74,10 @@
                                         echo "<td>" . $row['county'] . "</td>";
                                         echo "<td>" . $row['constituency'] . "</td>";
                                         echo "<td>" . $row['ward'] . "</td>";
-                                        echo "<td>" . $row['date_created'] . "</td>";
+                                        echo "<td>" . $row['date_joined'] . "</td>";
                                         echo "<td>";
                                             echo "<a href='read.php?id=". $row['id'] ."' title='View Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                                            echo "<a href='updateAgent.php?id=". $row['id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                            echo "<a href='updateMember.php?id=". $row['id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
                                             echo "<a href='delete.php?id=". $row['id'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                                         echo "</td>";
                                     echo "</tr>";
