@@ -1,7 +1,6 @@
 <?php
 
-define('EMAIL','njerimargret70@gmail.com');
-define('PASSWORD','GithukaCfthn/7048');
+
 
 
 define('DB_HOST','us-cdbr-east-02.cleardb.com');
